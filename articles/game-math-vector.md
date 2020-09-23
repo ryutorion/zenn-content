@@ -91,6 +91,12 @@ struct Vector3
 できるなら今のうちから対応しておいた方が良いだろう，という理由でconstexprにしています．
 単純にfloatの値を代入するだけなので例外も起きないはずなので，noexceptも指定します．
 
+なお，コード例のようにメンバ変数の初期化の際に","を先頭に持っていく書き方をすると，
+変数名の開始が縦に揃うので，見やすくなる気がします．
+:::message alert
+あくまでも主観です．
+:::
+
 最後に，各成分を同じ値で初期化するコンストラクタを用意します．
 例えば，0で初期化したい場合に3回も0を書くのは面倒です．
 そういった場合に重宝します．
@@ -155,6 +161,12 @@ inline constexpr const Vector3 operator+(const Vector3 & a, const Vector3 & b) n
 
 constexprやconst，noexceptを忘れないようにします．
 
+ベクトルの加算は，平行移動を表すのに用いられます．
+
+:::message
+図の追加
+:::
+
 # 減算
 
 減算の実装については，加算の演算子を減算の演算子に置き換えるだけなので，
@@ -178,6 +190,20 @@ inline constexpr const Vector3 operator-(const Vector3 & a, const Vector3 & b) n
     return Vector3(a.x + b.x, a.y + b.y, a.z + b.z);
 }
 ```
+
+ベクトルの減算は，逆ベクトルの加算と考えられます．つまり，$\mathbf{u} - \mathbf{v} = \mathbf{u} + (-\mathbf{v})$です．
+
+:::message
+図の追加
+:::
+
+また，右側のベクトル$\mathbf{v}$の指す位置から左側のベクトル$\mathbf{u}$の指す位置へのベクトルを表す，
+という視点も重要です．
+これは，カメラを考える場合に必要になります．
+
+:::message
+図の追加
+:::
 
 # 乗算
 
@@ -235,7 +261,12 @@ inline constexpr const Vector3 operator*(const Vector3 & a, const Vector3 & b) n
 }
 ```
 
+ベクトルに対するスカラーの乗算は，例えば拡大縮小などを表すのに用いられます．
+また，この後に搭乗する除算などにも利用されます．
+
 # 除算
+
+除算は，乗算を利用して次のように実装します．
 
 ```cpp
 struct Vector3
@@ -252,7 +283,10 @@ inline constexpr const Vector3 operator/(const Vector3 & v, const float s)
 }
 ```
 
-# ドット積
+一般的に，除算は乗算よりも実行に時間がかかる処理なので，逆数に変換した上で，
+3回除算する代わりに，1回の除算と3回の乗算にするわけです．
+
+# ドット積(dot product)
 
 あるベクトル$\mathbf{u}$とあるベクトル$\mathbf{v}$の成分同士の積の和を内積，
 またはドット積と言います．
@@ -272,6 +306,8 @@ struct Vector3
     }
 };
 ```
+
+このドット積は，次の長さを求めるのに利用したり，他にも色々なところで利用されます．
 
 # 長さ
 
@@ -309,7 +345,15 @@ std::sqrtはconstexprでないため，必然的にlength関数もconstexprで�
 
 $$\mathbf{u} \cdot \mathbf{v} = |\mathbf{u}||\mathbf{v}|\cos\theta$$
 
-ここから，$cos\theta$について整理すると，次のような式が導けます．
+このことから，内積の符号は2つのベクトルが成す角度で決まることが分かります．
+
+:::message
+図を追加
+:::
+
+掛け算だけの処理なので，手軽に前後の判定ができることになります．
+
+先ほどの式を$\cos\theta$について整理すると，次のような式が導けます．
 
 $$\cos\theta = \frac{\mathbf{u} \cdot \mathbf{v}}{|\mathbf{u}||\mathbf{v}|}$$
 
@@ -324,9 +368,9 @@ float theta = acos(u.dot(v) / (u.length() * v.length()));
 
 acos($\theta$)は$\cos^{-1}\theta$に対応する関数です．
 
-# 単位ベクトル
+# 単位ベクトル(unit vector)
 
-長さが1のベクトルを単位ベクトル(unit vector)と言います．
+長さが1のベクトルを単位ベクトルと言います．
 また，あるベクトル$\mathbf{u}$を次のような式で単位ベクトル$\mathbf{\hat{u}}$にすることを，
 正規化(normalize)と言います．
 
@@ -351,13 +395,16 @@ inline const Vector3 Vector3::unit() const
 また，変数を書き換えて単位ベクトルに変えてしまうような場合もあります．
 
 この分かりにくさを避けるために，最近はunitという関数名を使うようにしています．
+:::message alert
+あくまでも私の好みです．
+:::
 
 なお，他のメンバ関数と違い，構造体の外に定義を書いているのは，除算を利用するために，
 実装を除算の後に回す必要があるからです．
 
 また，constexprでないlength関数で割る関係上，unit関数もconstexprにはできません．
 
-# クロス積
+# クロス積(cross product)
 
 3次元ベクトルの場合，あるベクトル$\mathbf{u}$とあるベクトル$\mathbf{v}$について，
 両方に直交するベクトル$\mathbf{w}$を次のような実装で求めることができます．
@@ -403,30 +450,155 @@ $y$成分は，$z$と$x$です．この流れは，先ほどのクロス積の�
 このようにパターンさえ覚えてしまえば，細かいことは分からなくても，
 検索しなくてもクロス積を実装できるようになります．
 
-# プロジェクション
+# プロジェクション(projection)
+数学的にはもう少し厳密な意味があるのですが，ここではプロジェクション(projection)とは，
+あるベクトル$\mathbf{u}$とあるベクトル$\mathbf{v}$が同じ点から開始しているとして，
+$\mathbf{u}$の先から$\mathbf{v}$に垂直に交わる線を引いたときの，始点から交点へのベクトルを指すものとします．
+
+:::message
+図を追加
+:::
+
+プロジェクションベクトル$\mathbf{p}$は，$\mathbf{u}$と$\mathbf{v}$が成す角を$\theta$とすると，$|\mathbf{p}| = |\mathbf{u}|\cos\theta$となります．
+そして，方向は$\mathbf{v}$と平行なので，$\mathbf{v}$の単位ベクトルに大きさを掛ければ$\mathbf{p}$が求まります．
+このことから，プロジェクションベクトル$\mathbf{p}$は次のような式で求めることができます．
+
+$$\mathbf{p} = |\mathbf{u}|\cos\theta \frac{\mathbf{v}}{|\mathbf{v}|}$$
+
+この式の右辺に，$\frac{|\mathbf{v}|}{|\mathbf{v}|}$を掛けると計算しやすい式に変形できます．
+1を掛けているだけなので，結果は変わりません．
+
+$$\mathbf{p} = \frac{|\mathbf{u}||\mathbf{v}|\cos\theta}{|\mathbf{v}|^2}\mathbf{v} = \frac{\mathbf{u} \cdot \mathbf{v}}{\mathbf{v} \cdot \mathbf{v}}\mathbf{v}$$
+
+これを実装すると，次のようになります．
+
+```cpp
+struct Vector3
+{
+    constexpr const Vector3 projection(const Vector3 & v) const
+    {
+        return (dot(v) / v.dot(v)) * v;
+    }
+};
+```
+
+ちなみに，プロジェクションは日本語だと射影とか投影と表現されています．
+これもカメラを考える場合に役立ちます．
+
+# リジェクション(rejection)
+
+リジェクション$\mathbf{q}$は，プロジェクションで登場した垂線を表すベクトルです．
+プロジェクション$\mathbf{p}$との関係から，次の式が成り立ちます．
+
+$$\mathbf{u} = \mathbf{p} + \mathbf{q}$$
+
+この式を変形すると，次の式になります．
+
+$$\mathbf{q} = \mathbf{u} - \mathbf{p}$$
+
+よって，プロジェクションを利用することでリジェクションは次のように簡単に実装できます．
+
+```cpp
+struct Vector3
+{
+    constexpr const Vector3 rejection(const Vector3 & v) const
+    {
+        return *this - projection(v);
+    }
+};
+```
+
+なお，このリジェクションに対応する日本語が良く分からないので，ご存じの方がいれば，
+教えていただけると幸いです．
+
+# 反射(reflection)
 :::message
 そのうち追記されます．
 :::
 
-# リジェクション
+# 屈折(refraction)
 :::message
 そのうち追記されます．
 :::
 
-# 反射
-:::message
-そのうち追記されます．
-:::
+# 距離(distance)
 
-# 屈折
-:::message
-そのうち追記されます．
-:::
+あるベクトル$\mathbf{u}$とあるベクトル$\mathbf{v}$の始点が同じとして，
+$\mathbf{u}$の指す点から$\mathbf{v}$の指す点までの距離は次のような式で表せます．
+
+$$|\mathbf{v} - \mathbf{u}|$$
+
+よって，実装は次のようになります．
+
+```cpp
+struct Vector3
+{
+    inline float distance(const Vector3 & v) const;
+};
+
+inline float Vector3::distance(const Vector3 & v) const
+{
+    return (v - *this).length();
+}
+```
+
+減算を利用したいので，実装を後に回すためにdistance関数は宣言だけして，
+定義は減算の後ろに回しています．
+
+なお，Unreal Engine 4だと次のように一時的なVector3の構築が起きないようになってます．
+```cpp
+inline float square(const float v) noexcept
+{
+    return v * v;
+}
+
+struct Vector3
+{
+    float distance(const Vector3 & v) const
+    {
+        return std::sqrt(square(v.x - x) + square(v.y - y) + square(v.z - z));
+    }
+};
+```
+
+実際のところ，どちらの実装の方が効率が良いのかは計測してみないと分からないです．
+最近のコンパイラは賢いので，もしかしたら良い感じにしてくれるかもしれません．
 
 # ソースコード全文
+
 :::message
-そのうち追記されます．
+徐々に追記されていきます．
 :::
+
+```cpp
+#ifndef VECTOR3_H_INCLUDED
+#define VECTOR3_H_INCLUDED
+
+#include <cmath>
+
+struct Vector3
+{
+    float x;
+    float y;
+    float z;
+
+    Vector3() noexcept = default;
+
+    constexpr Vector3(float vx, float vy, float vz) noexcept
+        : x(vx)
+        , y(vy)
+        , z(vz)
+    {}
+
+    explicit constexpr Vector3(float v) noexcept
+        : x(v)
+        , y(v)
+        , z(v)
+    {}
+};
+
+#endif // VECTOR3_H_INCLUDED
+```
 
 # 今後の課題
 
@@ -440,4 +612,5 @@ $y$成分は，$z$と$x$です．この流れは，先ほどのクロス積の�
 - [Foundations of Game Engine Development Volume 1: Mathematics](https://foundationsofgameenginedev.com/)
 - [DirectXMath](https://github.com/microsoft/DirectXMath)
 - [glm](https://github.com/g-truc/glm)
-- [Unreal Engine 4](https://github.com/EpicGames/UnrealEngine)
+- [Unreal Engine 4(FVector)](https://docs.unrealengine.com/en-US/API/Runtime/Core/Math/FVector/index.html)
+- [Unity(UnityEngine.Vector3)](https://docs.unity3d.com/ja/current/ScriptReference/Vector3.html)
