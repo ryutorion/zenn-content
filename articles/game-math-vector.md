@@ -343,6 +343,40 @@ struct Vector3
 
 std::sqrtはconstexprでないため，必然的にlength関数もconstexprではなくなります．
 
+ところで，平方根の計算はまぁまぁ重い処理のため，避けられるなら避けたいところです．
+
+あるベクトル$\mathbf{u}$と$\mathbf{v}$について，$|\mathbf{u}| < |\mathbf{v}|$の場合，$|\mathbf{u}|^2 < |\mathbf{v}|^2$も成り立ちます．
+これを利用すると，どちらのベクトルの方が長いか，といったことを知りたいだけの場合，
+平方根を取らない状態の値で十分ということになります．
+
+そこで，長さの二乗を返す関数lengthSquaredを用意して，次のような実装にすることもあります．
+
+```cpp
+struct Vector3
+{
+    constexpr float lengthSquared() const noexcept
+    {
+        return dot(*this);
+    }
+
+    float length() const
+    {
+        return std::sqrt(lengthSquared());
+    }
+};
+```
+
+:::message
+調べていて気付いたんですが，DirectXMathはXMVector3Length，Unreal Engine 4はSize，
+Unityはmagnitudeとそれぞれ名前が違うんですよね．
+
+二乗の関数についても，DirectXMathはXMVector3LengthSq，Unreal Engine 4はSizeSquared，
+UnityはsqrMagnitudeとなっています．
+
+個人的には，squaredの略としてsqrを使うとsquare rootの一般的な略である
+sqrtと見分けにくいので，略すとしてもsqかな，と思っています．
+:::
+
 # ドット積と長さと角度
 
 あるベクトル$\mathbf{u}$と$\mathbf{v}$の間の角度を$\theta$とすると，次の式が成り立ちます．
@@ -613,6 +647,13 @@ struct Vector3
 
 - SIMD(Single Instruction Multiple Data)を使った高速化
 - 単体テストの追加
+- ゼロ除算の考慮
+
+# 追加の実装
+
+UnityやUnreal Engineでは，文字列に変換する関数も提供されていたりします．
+この辺は，ベクトルの実装そのものとは直接関係無いのでここでは省きますが，
+シリアライズなども考慮して実装してみるのも面白いかもしれません．
 
 # 参考文献
 
