@@ -213,9 +213,11 @@ inline constexpr const Vector3 operator-(const Vector3 & a, const Vector3 & b) n
 # 乗算
 
 ベクトルの乗算には色々な種類がありますが，ここではスカラーとの積を考えます．
-ベクトル$v = (v_x,v_y,v_z)$に対して，スカラー$s$があったとすると，
-$s * v = (s * v_x, s * v_y, s * v_z)$，$v * s = (v_x * s, v_y * s, v_z * s)$のように，
+ベクトル$\mathbf{v} = (v_x,v_y,v_z)$に対して，スカラー$s$があったとすると，
+$s * \mathbf{v} = (s * v_x, s * v_y, s * v_z)$，$\mathbf{v} * s = (v_x * s, v_y * s, v_z * s)$のように，
 スカラーの積はそれぞれの成分にスカラーを掛けたものになります．
+
+通常は，演算子を書かずに$s\mathbf{v}$のように書きます．
 
 これを実装すると，次のようになります．
 ```cpp
@@ -662,9 +664,34 @@ $$\mathbf{u} = (\mathbf{u}\cdot\mathbf{\hat{p}})\mathbf{\hat{p}} + |\mathbf{r}|\
 
 # 反射(reflection)
 
-:::message
-そのうち追記されます．
-:::
+物理的な反射を考える場合，摩擦や反発係数などを考える必要があるのですが，
+ここでは理想的な反射をする場合を考えます．
+
+次の図のように，ある面に入ってくる光の方向を表すベクトルを$\mathbf{L}$，面の法線を$\mathbf{N}$とします．
+
+![反射ベクトル](https://storage.googleapis.com/zenn-user-upload/5jr5hyct7wc0mnzw2nlzj5s7ouuu)
+
+$-\mathbf{L}$と$\mathbf{N}$のプロジェクションは，$((\mathbf{-L})\cdot\mathbf{N})\mathbf{N}$になります．
+$\mathbf{L}$をそのまま面の中に延長し，法線と平行な補助線を引くと，
+反射ベクトル$\mathbf{R}$は次の式で表せることが分かります．
+
+$$\mathbf{R} = \mathbf{L} + 2((-\mathbf{L})\cdot\mathbf{N})\mathbf{N}$$
+
+ここで，$(-\mathbf{L})\cdot\mathbf{N} = -(\mathbf{L}\cdot\mathbf{N})$が言えるので，実装は次のようになります．
+
+```cpp
+struct Vector3
+{
+    inline constexpr const Vector3 reflection(const Vector3 & n) const noexcept;
+};
+
+inline constexpr const Vector3 reflection(const Vector3 & n) const noexcept
+{
+    return *this + (-2.0f * dot(n)) * n;
+}
+```
+
+$-\mathbf{L}$を使うと，逆ベクトルの生成が入るので，ドット積を取ってから負数にした方が楽です．
 
 # 屈折(refraction)
 :::message
