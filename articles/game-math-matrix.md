@@ -936,6 +936,7 @@ $$
 # 謝辞
 
 @[tweet](https://twitter.com/nico_shindannin/status/1310376329410301952)
+ご指摘ありがとうございます．修正しました．
 
 # ソースコード全文
 
