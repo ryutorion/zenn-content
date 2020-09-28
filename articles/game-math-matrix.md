@@ -240,7 +240,7 @@ public:
 class Matrix4x4
 {
 public:
-    Matrix4x4 & operator*=(const float s)
+    Matrix4x4 & operator*=(const float s) noexcept
     {
         mV[0][0] *= s;
         mV[0][1] *= s;
@@ -428,10 +428,10 @@ public:
     constexpr const Matrix4x4 transpose() const noexcept
     {
         return Matrix4x4(
-            m[0][0], m[1][0], m[2][0], m[3][0],
-            m[0][1], m[1][1], m[2][1], m[3][1],
-            m[0][2], m[1][2], m[2][2], m[3][2],
-            m[0][3], m[1][3], m[2][3], m[3][3]
+            mV[0][0], mV[1][0], mV[2][0], mV[3][0],
+            mV[0][1], mV[1][1], mV[2][1], mV[3][1],
+            mV[0][2], mV[1][2], mV[2][2], mV[3][2],
+            mV[0][3], mV[1][3], mV[2][3], mV[3][3]
         );
     }
 };
@@ -949,7 +949,11 @@ $$
 
 # ソースコード全文
 
+- [Matrix2x2.h](https://github.com/ryutorion/zenn-content/blob/master/src/game/math/Matrix2x2.h)
+- [Matrix3x3.h](https://github.com/ryutorion/zenn-content/blob/master/src/game/math/Matrix3x3.h)
+- [Matrix4x4.h](https://github.com/ryutorion/zenn-content/blob/master/src/game/math/Matrix4x4.h)
+
 :::message
-そのうちGitHubに上げます．
+そのうち，ビルド手順や単体テストを追加します．
 :::
 
