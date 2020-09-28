@@ -5,15 +5,15 @@ class Matrix2x2
 {
 public:
 	Matrix2x2() noexcept = default;
-    constexpr Matrix2x2(
-        float m00, float m01,
-        float m10, float m11
-    ) noexcept
-        : mV {
-            m00, m01,
-            m10, m11
-        }
-    {}
+	constexpr Matrix2x2(
+		float m00, float m01,
+		float m10, float m11
+	) noexcept
+		: mV {
+			m00, m01,
+			m10, m11
+		}
+	{}
 
 	constexpr const Matrix2x2 operator*(const Matrix2x2 & m)
 	{
@@ -26,10 +26,10 @@ public:
 		);
 	}
 
-    constexpr float determinant() const noexcept
-    {
-        return mV[0][0] * mV[1][1] - mV[0][1] * mV[1][0];
-    }
+	constexpr float determinant() const noexcept
+	{
+		return mV[0][0] * mV[1][1] - mV[0][1] * mV[1][0];
+	}
 
 	constexpr const Matrix2x2 inverse() const
 	{
@@ -42,7 +42,7 @@ public:
 	}
 
 private:
-    float mV[2][2];
+	float mV[2][2];
 };
 
 #endif // MATRIX2X2_H_INCLUDED

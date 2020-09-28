@@ -8,21 +8,21 @@ class Matrix4x4
 public:
 	Matrix4x4() noexcept = default;
 
-    constexpr Matrix4x4(
-        float m00, float m01, float m02, float m03,
-        float m10, float m11, float m12, float m13,
-        float m20, float m21, float m22, float m23,
-        float m30, float m31, float m32, float m33
-    ) noexcept
-        : mV {
-            m00, m01, m02, m03,
-            m10, m11, m12, m13,
-            m20, m21, m22, m23,
-            m30, m31, m32, m33
-        }
-    {}
+	constexpr Matrix4x4(
+		float m00, float m01, float m02, float m03,
+		float m10, float m11, float m12, float m13,
+		float m20, float m21, float m22, float m23,
+		float m30, float m31, float m32, float m33
+	) noexcept
+		: mV {
+			m00, m01, m02, m03,
+			m10, m11, m12, m13,
+			m20, m21, m22, m23,
+			m30, m31, m32, m33
+		}
+	{}
 
-    Matrix4x4 & operator+=(const Matrix4x4 & m) noexcept
+	Matrix4x4 & operator+=(const Matrix4x4 & m) noexcept
 	{
 		mV[0][0] += m.mV[0][0];
 		mV[0][1] += m.mV[0][1];
@@ -47,7 +47,7 @@ public:
 		return *this;
 	}
 
-    constexpr const Matrix4x4 operator+(const Matrix4x4 & m) const noexcept
+	constexpr const Matrix4x4 operator+(const Matrix4x4 & m) const noexcept
 	{
 		return Matrix4x4(
 			mV[0][0] + m.mV[0][0],
@@ -72,7 +72,7 @@ public:
 		);
 	}
 
-    Matrix4x4 & operator-=(const Matrix4x4 & m) noexcept
+	Matrix4x4 & operator-=(const Matrix4x4 & m) noexcept
 	{
 		mV[0][0] -= m.mV[0][0];
 		mV[0][1] -= m.mV[0][1];
@@ -97,7 +97,7 @@ public:
 		return *this;
 	}
 
-    constexpr const Matrix4x4 operator-(const Matrix4x4 & m) const noexcept
+	constexpr const Matrix4x4 operator-(const Matrix4x4 & m) const noexcept
 	{
 		return Matrix4x4(
 			mV[0][0] - m.mV[0][0],
@@ -122,52 +122,52 @@ public:
 		);
 	}
 
-    Matrix4x4 & operator*=(const float s) noexcept
-    {
-        mV[0][0] *= s;
-        mV[0][1] *= s;
-        mV[0][2] *= s;
-        mV[0][3] *= s;
+	Matrix4x4 & operator*=(const float s) noexcept
+	{
+		mV[0][0] *= s;
+		mV[0][1] *= s;
+		mV[0][2] *= s;
+		mV[0][3] *= s;
 
-        mV[1][0] *= s;
-        mV[1][1] *= s;
-        mV[1][2] *= s;
-        mV[1][3] *= s;
+		mV[1][0] *= s;
+		mV[1][1] *= s;
+		mV[1][2] *= s;
+		mV[1][3] *= s;
 
-        mV[2][0] *= s;
-        mV[2][1] *= s;
-        mV[2][2] *= s;
-        mV[2][3] *= s;
+		mV[2][0] *= s;
+		mV[2][1] *= s;
+		mV[2][2] *= s;
+		mV[2][3] *= s;
 
-        mV[3][0] *= s;
-        mV[3][1] *= s;
-        mV[3][2] *= s;
-        mV[3][3] *= s;
+		mV[3][0] *= s;
+		mV[3][1] *= s;
+		mV[3][2] *= s;
+		mV[3][3] *= s;
 
-        return *this;
-    }
+		return *this;
+	}
 
-    constexpr const Matrix4x4 operator*(const float s) const noexcept
-    {
-        return Matrix4x4(
-            mV[0][0] * s,
-            mV[0][1] * s,
-            mV[0][2] * s,
-            mV[0][3] * s,
-            mV[1][0] * s,
-            mV[1][1] * s,
-            mV[1][2] * s,
-            mV[1][3] * s,
-            mV[2][0] * s,
-            mV[2][1] * s,
-            mV[2][2] * s,
-            mV[2][3] * s,
-            mV[3][0] * s,
-            mV[3][1] * s,
-            mV[3][2] * s,
-            mV[3][3] * s
-        );
-    }
+	constexpr const Matrix4x4 operator*(const float s) const noexcept
+	{
+		return Matrix4x4(
+			mV[0][0] * s,
+			mV[0][1] * s,
+			mV[0][2] * s,
+			mV[0][3] * s,
+			mV[1][0] * s,
+			mV[1][1] * s,
+			mV[1][2] * s,
+			mV[1][3] * s,
+			mV[2][0] * s,
+			mV[2][1] * s,
+			mV[2][2] * s,
+			mV[2][3] * s,
+			mV[3][0] * s,
+			mV[3][1] * s,
+			mV[3][2] * s,
+			mV[3][3] * s
+		);
+	}
 	constexpr const Matrix4x4 operator*(const Matrix4x4 & m) const noexcept
 	{
 		return Matrix4x4(
@@ -193,22 +193,22 @@ public:
 		);
 	}
 
-    Matrix4x4 & operator*=(const Matrix4x4 & m) noexcept
-    {
-        *this = *this * m;
+	Matrix4x4 & operator*=(const Matrix4x4 & m) noexcept
+	{
+		*this = *this * m;
 
-        return *this;
-    }
+		return *this;
+	}
 
-    constexpr const Matrix4x4 transpose() const noexcept
-    {
-        return Matrix4x4(
-            mV[0][0], mV[1][0], mV[2][0], mV[3][0],
-            mV[0][1], mV[1][1], mV[2][1], mV[3][1],
-            mV[0][2], mV[1][2], mV[2][2], mV[3][2],
-            mV[0][3], mV[1][3], mV[2][3], mV[3][3]
-        );
-    }
+	constexpr const Matrix4x4 transpose() const noexcept
+	{
+		return Matrix4x4(
+				mV[0][0], mV[1][0], mV[2][0], mV[3][0],
+				mV[0][1], mV[1][1], mV[2][1], mV[3][1],
+				mV[0][2], mV[1][2], mV[2][2], mV[3][2],
+				mV[0][3], mV[1][3], mV[2][3], mV[3][3]
+				);
+	}
 
     constexpr float determinant() const noexcept
 	{
@@ -335,7 +335,7 @@ public:
 		);
 	}
 private:
-    float mV[4][4];
+	float mV[4][4];
 };
 
 inline constexpr const Matrix4x4 operator*(const float s, const Matrix4x4 & m) noexcept;
@@ -345,7 +345,7 @@ inline constexpr const Matrix4x4 operator*(const float s, const Matrix4x4 & m) n
 //==============================================================================
 inline constexpr const Matrix4x4 operator*(const float s, const Matrix4x4 & m) noexcept
 {
-    return m * s;
+	return m * s;
 }
 
 #endif // MATRIX4X4_H_INCLUDED
