@@ -122,8 +122,8 @@ explicitを忘れてはいけません．
 
 # 逆ベクトル
 
-ベクトル$v$と逆方向のベクトルを表すのに，$-v$と書きます．
-$v=(v_x,v_y,v_z)$とすると，$-v=(-v_x,-v_y,-v_z)$となります．
+ベクトル$\mathbf{v}$と逆方向のベクトルを表すのに，$-\mathbf{v}$と書きます．
+$\mathbf{v}=(v_x,v_y,v_z)$とすると，$-\mathbf{v}=(-v_x,-v_y,-v_z)$となります．
 
 これを実装すると，次のようになります．
 ```cpp
@@ -135,9 +135,9 @@ inline constexpr const Vector3 operator-(const Vector3 & v) noexcept
 
 # 加算
 
-ベクトル$u=(u_x,u_y,u_z)$とベクトル$v=(v_x,v_y,v_z)$の加算は，
+ベクトル$\mathbf{u}=(u_x,u_y,u_z)$とベクトル$\mathbf{v}=(v_x,v_y,v_z)$の加算は，
 成分別の和を成分として持つベクトルになります．
-つまり，$u + v = (u_x + v_x, u_y + v_y, u_z + v_z)$です．
+つまり，$\mathbf{u} + \mathbf{v} = (u_x + v_x, u_y + v_y, u_z + v_z)$です．
 
 これを実装すると，次のようになります．
 ```cpp
@@ -528,9 +528,11 @@ $$|\mathbf{u}\times\mathbf{v}|=|\mathbf{u}||\mathbf{v}|\sin\theta$$
 すると，次の式が成り立ちます．
 
 $$
+\begin{array}{l}
 \mathbf{x} = \mathbf{y} \times \mathbf{z}\\
 \mathbf{y} = \mathbf{z} \times \mathbf{x}\\
 \mathbf{z} = \mathbf{x} \times \mathbf{y}
+\end{array}
 $$
 
 つまり，$\mathbf{x} \rArr \mathbf{y} \rArr \mathbf{z} \rArr \mathbf{x}$という順番を覚えると，
