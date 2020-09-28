@@ -902,8 +902,8 @@ inline constexpr const Vector3 operator-(const Vector3 & a, const Vector3 & b) n
 inline constexpr const Vector3 operator*(const Vector3 & v, const float s) noexcept;
 inline constexpr const Vector3 operator*(const float s, const Vector3 & v) noexcept;
 inline constexpr const Vector3 operator*(const Vector3 & a, const Vector3 & b) noexcept;
-inline constexpr const Vector3 operator/(const Vector3 & v, const float s) noexcept;
-inline constexpr const Vector3 operator/(const Vector3 & a, const Vector3 & b) noexcept;
+inline constexpr const Vector3 operator/(const Vector3 & v, const float s);
+inline constexpr const Vector3 operator/(const Vector3 & a, const Vector3 & b);
 
 //==============================================================================
 // Inline functions
@@ -963,12 +963,12 @@ inline constexpr const Vector3 operator*(const Vector3 & a, const Vector3 & b) n
     return Vector3(a.x * b.x, a.y * b.z, a.z * b.z);
 }
 
-inline constexpr const Vector3 operator/(const Vector3 & v, const float s) noexcept
+inline constexpr const Vector3 operator/(const Vector3 & v, const float s)
 {
     return v * (1.0f / s);
 }
 
-inline constexpr const Vector3 operator/(const Vector3 & a, const Vector3 & b) noexcept
+inline constexpr const Vector3 operator/(const Vector3 & a, const Vector3 & b)
 {
     return Vector3(a.x / b.x, a.y / b.y, a.z / b.z);
 }

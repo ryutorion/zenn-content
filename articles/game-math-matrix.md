@@ -581,7 +581,7 @@ public:
     constexpr Matrix2x2(
         float m00, float m01,
         float m10, float m11
-    )
+    ) noexcept
         : mV {
             m00, m01,
             m10, m11
@@ -602,8 +602,8 @@ public:
     constexpr Matrix3x3(
         float m00, float m01, float m02,
         float m10, float m11, float m12,
-        float m10, float m11, float m12
-    )
+        float m20, float m21, float m22
+    ) noexcept
         : mV {
             m00, m01, m02,
             m10, m11, m12,
@@ -613,22 +613,22 @@ public:
 
     constexpr float determinant() const noexcept
     {
-        float c00 = mV[0][0] * Matrix2x2(
+        float c00 = Matrix2x2(
             mV[1][1], mV[1][2],
             mV[2][1], mV[2][2]
         ).determinant();
 
-        float c01 = -mV[0][1] * Matrix2x2(
+        float c01 = -Matrix2x2(
             mV[1][0], mV[1][2],
             mV[2][0], mV[2][2]
         ).determinant();
 
-        float c02 = mV[0][2] * Matrix2x2(
+        float c02 = Matrix2x2(
             mV[1][0], mV[1][1],
             mV[2][0], mV[2][1]
         ).determinant();
 
-        return c00 + c01 + c02;
+        return mV[0][0] * c00 + mV[0][1] * c01 + mV[0][2] * c02;
     }
 private:
     float mV[3][3];
@@ -639,31 +639,31 @@ class Matrix4x4
 public:
     constexpr float determinant() const noexcept
     {
-        float c00 = mV[0][0] * Matrix3x3(
+        float c00 = Matrix3x3(
             mV[1][1], mV[1][2], mV[1][3],
             mV[2][1], mV[2][2], mV[2][3],
             mV[3][1], mV[3][2], mV[3][3]
         ).determinant();
 
-        float c01 = -mV[0][1] * Matrix3x3(
+        float c01 = -(Matrix3x3(
             mV[1][0], mV[1][2], mV[1][3],
             mV[2][0], mV[2][2], mV[2][3],
             mV[3][0], mV[3][2], mV[3][3]
-        ).determinant();
+        ).determinant());
 
-        float c02 = mV[0][2] * Matrix3x3(
+        float c02 = Matrix3x3(
             mV[1][0], mV[1][1], mV[1][3],
             mV[2][0], mV[2][1], mV[2][3],
             mV[3][0], mV[3][1], mV[3][3]
         ).determinant();
 
-        float c03 = -mV[0][3] * Matrix3x3(
+        float c03 = -(Matrix3x3(
             mV[1][0], mV[1][1], mV[1][2],
             mV[2][0], mV[2][1], mV[2][2],
             mV[3][0], mV[3][1], mV[3][2]
-        ).determinant();
+        ).determinant());
 
-        return c00 + c01 + c02 + c03;
+        return mV[0][0] * c00 + mV[0][1] * c01 + mV[0][2] * c02 + mV[0][3] * c03;
     }
 };
 ```
@@ -748,97 +748,106 @@ $$
 
 逆行列を求める実装は次のようになります．
 
+:::message alert
+2020/09/28の12時前のコードは盛大に間違えてました．
+そっちを見てた人は申し訳ありません．
+行列式を求めるときは成分と掛けるんですが，
+余因子には掛けちゃダメですね．
+:::
+
 ```cpp
 class Matrix4x4
 {
 public:
     constexpr const Matrix4x4 inverse() const
     {
-        float c00 = mV[0][0] * Matrix3x3(
+        float c00 = Matrix3x3(
             mV[1][1], mV[1][2], mV[1][3],
             mV[2][1], mV[2][2], mV[2][3],
             mV[3][1], mV[3][2], mV[3][3]
         ).determinant();
-        float c01 = -mV[0][1] * Matrix3x3(
+        float c01 = -(Matrix3x3(
             mV[1][0], mV[1][2], mV[1][3],
             mV[2][0], mV[2][2], mV[2][3],
             mV[3][0], mV[3][2], mV[3][3]
-        ).determinant();
-        float c02 = mV[0][2] * Matrix3x3(
+        ).determinant());
+        float c02 = Matrix3x3(
             mV[1][0], mV[1][1], mV[1][3],
             mV[2][0], mV[2][1], mV[2][3],
             mV[3][0], mV[3][1], mV[3][3]
         ).determinant();
-        float c03 = -mV[0][3] * Matrix3x3(
+        float c03 = -(Matrix3x3(
             mV[1][0], mV[1][1], mV[1][2],
             mV[2][0], mV[2][1], mV[2][2],
             mV[3][0], mV[3][1], mV[3][2]
-        ).determinant();
+        ).determinant());
 
-        float c10 = -mV[1][0] * Matrix3x3(
+        float c10 = -(Matrix3x3(
             mV[0][1], mV[0][2], mV[0][3],
             mV[2][1], mV[2][2], mV[2][3],
             mV[3][1], mV[3][2], mV[3][3]
-        ).determinant();
-        float c11 = mV[1][1] * Matrix3x3(
+        ).determinant());
+        float c11 = Matrix3x3(
             mV[0][0], mV[0][2], mV[0][3],
             mV[2][0], mV[2][2], mV[2][3],
             mV[3][0], mV[3][2], mV[3][3]
         ).determinant();
-        float c12 = -mV[1][2] * Matrix3x3(
+        float c12 = -(Matrix3x3(
             mV[0][0], mV[0][1], mV[0][3],
             mV[2][0], mV[2][1], mV[2][3],
             mV[3][0], mV[3][1], mV[3][3]
-        ).determinant();
-        float c13 = mV[1][3] * Matrix3x3(
+        ).determinant());
+        float c13 = Matrix3x3(
             mV[0][0], mV[0][1], mV[0][2],
             mV[2][0], mV[2][1], mV[2][2],
             mV[3][0], mV[3][1], mV[3][2]
         ).determinant();
 
-        float c20 = mV[2][0] * Matrix3x3(
+        float c20 = Matrix3x3(
             mV[0][1], mV[0][2], mV[0][3],
             mV[1][1], mV[1][2], mV[1][3],
             mV[3][1], mV[3][2], mV[3][3]
         ).determinant();
-        float c21 = -mV[2][1] * Matrix3x3(
+        float c21 = -(Matrix3x3(
             mV[0][0], mV[0][2], mV[0][3],
             mV[1][0], mV[1][2], mV[1][3],
             mV[3][0], mV[3][2], mV[3][3]
-        ).determinant();
-        float c22 = mV[2][2] * Matrix3x3(
+        ).determinant());
+        float c22 = Matrix3x3(
             mV[0][0], mV[0][1], mV[0][3],
             mV[1][0], mV[1][1], mV[1][3],
             mV[3][0], mV[3][1], mV[3][3]
         ).determinant();
-        float c23 = -mV[2][3] * Matrix3x3(
+        float c23 = -(Matrix3x3(
             mV[0][0], mV[0][1], mV[0][2],
             mV[1][0], mV[1][1], mV[1][2],
             mV[3][0], mV[3][1], mV[3][2]
-        ).determinant();
+        ).determinant());
 
-        float c30 = -mV[3][0] * Matrix3x3(
+        float c30 = -(Matrix3x3(
             mV[0][1], mV[0][2], mV[0][3],
             mV[1][1], mV[1][2], mV[1][3],
             mV[2][1], mV[2][2], mV[2][3]
-        ).determinant();
-        float c31 = mV[3][1] * Matrix3x3(
+        ).determinant());
+        float c31 = Matrix3x3(
             mV[0][0], mV[0][2], mV[0][3],
             mV[1][0], mV[1][2], mV[1][3],
             mV[2][0], mV[2][2], mV[2][3]
         ).determinant();
-        float c32 = -mV[3][2] * Matrix3x3(
+        float c32 = -(Matrix3x3(
             mV[0][0], mV[0][1], mV[0][3],
             mV[1][0], mV[1][1], mV[1][3],
             mV[2][0], mV[2][1], mV[2][3]
-        ).determinant();
-        float c33 = mV[3][3] * Matrix3x3(
+        ).determinant());
+        float c33 = Matrix3x3(
             mV[0][0], mV[0][1], mV[0][2],
             mV[1][0], mV[1][1], mV[1][2],
             mV[2][0], mV[2][1], mV[2][2]
         ).determinant();
 
-        float rd = 1.0f / (c00 + c01 + c02 + c03);
+        // 幅の関係で2つに分けてますが，1行にしても良いです
+        float d = (mV[0][0] * c00 + mV[0][1] * c01 + mV[0][2] * c02 + mV[0][3] * c03);
+        float rd = 1.0f / d;
 
         return Matrix4x4(
             c00 * rd, c10 * rd, c20 * rd, c30 * rd,
@@ -935,9 +944,12 @@ $$
 
 # 謝辞
 
-@[tweet](https://twitter.com/nico_shindannin/status/1310376329410301952)
-ご指摘ありがとうございます．修正しました．
+@nico_shindannin さんにコードのミスを指摘していただきました．
+ありがとうございます．
 
 # ソースコード全文
 
+:::message
+そのうちGitHubに上げます．
+:::
 
