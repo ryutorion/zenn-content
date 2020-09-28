@@ -657,7 +657,7 @@ public:
             mV[3][0], mV[3][1], mV[3][3]
         ).determinant();
 
-        float c00 = -mV[0][3] * Matrix3x3(
+        float c03 = -mV[0][3] * Matrix3x3(
             mV[1][0], mV[1][1], mV[1][2],
             mV[2][0], mV[2][1], mV[2][2],
             mV[3][0], mV[3][1], mV[3][2]
@@ -932,6 +932,10 @@ $$
 - [DirectXMath](https://github.com/microsoft/DirectXMath)
 - [glm](https://github.com/g-truc/glm)
 - [Unreal Engine 4(FMatrix)](https://docs.unrealengine.com/en-US/API/Runtime/Core/Math/FMatrix/index.html)
+
+# 謝辞
+
+@[tweet](https://twitter.com/nico_shindannin/status/1310376329410301952)
 
 # ソースコード全文
 
