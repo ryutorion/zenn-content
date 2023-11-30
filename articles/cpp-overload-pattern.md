@@ -13,6 +13,11 @@ published: true
 
 しかし，日本語で検索してみても通常のオーバーロードが引っ掛かるばかりで日本語での記事は無さそうだったのでまとめてみました．もし日本語では別の名前で普及しているよ，という話があれば教えていただけると幸いです．
 
+:::message
+2023/12/1
+yohhoyさんに日本語でも名前はついてないけれど紹介されている記事があると紹介していただいたので，参考資料に追加しています．
+:::
+
 簡単に言うと，複数のlambdaをオーバーロードとしてまとめるためのパターンのようです．
 
 ```cpp
@@ -83,3 +88,7 @@ std::variantを使う機会が無かったのですが，なかなか面白そ�
 - [Visiting a std::variant with the Overload Pattern](https://www.modernescpp.com/index.php/visiting-a-std-variant-with-the-overload-pattern/)
 - [Overload pattern - what's wrong with it and how not to use it?](https://elegant-cpp.com/overload-pattern-whats-wrong-with-it-and-how-not-to-use-it/)
 - [Visiting a std::variant safely](https://andreasfertig.blog/2023/07/visiting-a-stdvariant-safely/)
+
+- [ラムダ式を継承](https://osyo-manga.hatenadiary.org/entry/20121224/1356320541)
+- [ラムダ式をオーバーロードする](https://kenkyu-note.hatenablog.com/entry/2019/09/01/040017)
+- [ラムダ式のオーバーロード](https://yohhoy.hatenadiary.jp/entry/20200715/p1)
