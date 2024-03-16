@@ -143,7 +143,7 @@ Amazonのサンプルから目次の画像を見ることも可能ですが，�
    * Sphere (3D)
    * Dipole (3D)
    * Circle (3D)
-   * POint (2D)
+   * Point (2D)
    * Line (2D)
    * Round Point (2D)
    * Circle (2D)
