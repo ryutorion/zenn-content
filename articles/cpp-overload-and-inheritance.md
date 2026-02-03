@@ -184,3 +184,45 @@ usingで持ってこれるものだけ持ってくる，みたいにしてくれ
 そもそもこんな書き方をするなと言われればそれまでですが，こうせざるを得ない事情があるのです．
 
 何かもっと良い書き方があればコメントをお願いします．
+
+2026/02/03 追記
+[yohhoy生成からコメントいただきました](https://x.com/yohhoy/status/2018674363084497263?s=20)
+
+variadic templateとforward使えば良いよね，と．  
+確かにその通りですね．
+
+```cpp
+// https://godbolt.org/z/1KoYb4zxK
+#include <cstdint>
+#include <iostream>
+
+using namespace std;
+
+struct Base
+{
+    void f(int32_t) { cout << "int32_t" << endl; }
+    void f(double) { cout << "double" << endl; }
+private:
+    void f(const char*) { cout << "const char*" << endl; }
+};
+
+struct Derived : public Base
+{
+    template <class... Args>
+    auto f(Args&&... args)
+    {
+        Base::f(std::forward<Args>(args)...);
+    }
+//  using Base::f;
+    void f(float) { cout << "float" << endl; }
+};
+
+int main()
+{
+    Derived b;
+    b.f(0);
+    b.f(0.0);
+    b.f(0.0f);
+//    b.f("");
+}
+```
